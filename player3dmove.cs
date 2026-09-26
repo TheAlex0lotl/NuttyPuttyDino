@@ -1,29 +1,43 @@
 using UnityEngine;
 
-public class CameraPan : MonoBehaviour
+[RequireComponent(typeof(CharacterController))]
+public class player3dmove : MonoBehaviour
 {
-    public float moveSpeed = 10f;
-    public float panSpeed = 100f;
+    [Header("Movement Settings")]
+    public float moveSpeed = 5f;
+    public float rotationSpeed = 180f; // Degrees per second
+    public float gravity = 9.81f;
+
+    private CharacterController controller;
+    private Vector3 moveDirection = Vector3.zero;
+
+    void Start()
+    {
+        controller = GetComponent<CharacterController>();
+    }
 
     void Update()
     {
-        // Move forward with W key
-        if (Input.GetKey(KeyCode.W))
+        // 1. Handle Rotation (A and D keys)
+        float rotationInput = 0f;
+        if (Input.GetKey(KeyCode.A)) rotationInput = -1f;
+        if (Input.GetKey(KeyCode.D)) rotationInput = 1f;
+
+        transform.Rotate(Vector3.up, rotationInput * rotationSpeed * Time.deltaTime);
+
+        // 2. Handle Forward Movement (W key only)
+        if (controller.isGrounded)
         {
-            transform.Translate(Vector3.forward * moveSpeed * Time.deltaTime);
+            moveDirection = Vector3.zero;
+            
+            if (Input.GetKey(KeyCode.W))
+            {
+                moveDirection = transform.forward * moveSpeed;
+            }
         }
 
-        // Pan left and right with A and D keys
-        float panInput = 0f;
-        if (Input.GetKey(KeyCode.A))
-        {
-            panInput = -1f;
-        }
-        else if (Input.GetKey(KeyCode.D))
-        {
-            panInput = 1f;
-        }
-
-        transform.Rotate(Vector3.up * panInput * panSpeed * Time.deltaTime);
+        // 3. Apply Gravity and Move
+        moveDirection.y -= gravity * Time.deltaTime;
+        controller.Move(moveDirection * Time.deltaTime);
     }
 }
