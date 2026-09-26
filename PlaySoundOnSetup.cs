@@ -1,16 +1,17 @@
-using UnityEngine;
-
-[RequireComponent(typeof(AudioSource))] // Ensures the GameObject has an Audio Source attached
 public class PlaySoundOnSetup : MonoBehaviour
 {
-    private AudioSource audioSource;
+    // The sound file you want to play
+    public AudioClip openingClip;
+    
+    // The AudioSource component that will play the clip
+    private AudioSource audioSourceTwo;
 
     void Start()
     {
-        // Get the Audio Source component attached to this GameObject
+        // Get the AudioSource component attached to this GameObject
         audioSource = GetComponent<AudioSource>();
-
-        // Play the sound immediately during setup
-        audioSource.Play();
+        audioSource.PlayOneShot(soundClip); 
     }
 }
+
+    
